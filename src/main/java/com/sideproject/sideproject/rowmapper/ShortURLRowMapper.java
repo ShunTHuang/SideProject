@@ -15,9 +15,9 @@ public class ShortURLRowMapper implements RowMapper<ShortURL> {
         shortURL.setOriginalURL(rs.getString("original"));
         shortURL.setShortURL(rs.getString("short"));
         shortURL.setPassword(rs.getString("password"));
-        shortURL.setExpiryDate(rs.getDate("expired"));
-        shortURL.setCreatedDate(rs.getDate("created_date"));
-        shortURL.setModifiedDate(rs.getDate("last_modified_date"));
+        shortURL.setExpiryDate(rs.getTimestamp("expired"));
+        shortURL.setCreatedDate(rs.getTimestamp("created_date"));
+        shortURL.setModifiedDate(rs.getTimestamp("last_modified_date"));
         return shortURL;
     }
 }
