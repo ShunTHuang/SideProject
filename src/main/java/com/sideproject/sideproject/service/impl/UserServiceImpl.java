@@ -8,6 +8,7 @@ import com.sideproject.sideproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 
@@ -23,6 +24,8 @@ public class UserServiceImpl implements UserService {
         if (user != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already in use");
         }
+        String hashPassword = DigestUtils.md5DigestAsHex(userRegisterRequest.getPassword().getBytes());
+        userRegisterRequest.setPassword(hashPassword);
         return userDao.createUser(userRegisterRequest);
     }
 
@@ -37,7 +40,8 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email or password");
         }
-        if (!user.getPassword().equals(userLoginRequest.getPassword())) {
+        String hashPassword = DigestUtils.md5DigestAsHex(userLoginRequest.getPassword().getBytes());
+        if (!hashPassword.equals(user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email or password");
         }
         return user;
