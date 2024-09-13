@@ -1,6 +1,7 @@
 package com.sideproject.sideproject.service.impl;
 
 import com.sideproject.sideproject.dao.UserDao;
+import com.sideproject.sideproject.dto.UserLoginRequest;
 import com.sideproject.sideproject.dto.UserRegisterRequest;
 import com.sideproject.sideproject.model.User;
 import com.sideproject.sideproject.service.UserService;
@@ -28,5 +29,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Integer getUserById) {
         return userDao.getUserById(getUserById);
+    }
+
+    @Override
+    public User login(UserLoginRequest userLoginRequest) {
+        User user = userDao.getUserByEmail(userLoginRequest.getEmail());
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email or password");
+        }
+        if (!user.getPassword().equals(userLoginRequest.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email or password");
+        }
+        return user;
     }
 }
