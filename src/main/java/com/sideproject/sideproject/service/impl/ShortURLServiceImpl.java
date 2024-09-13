@@ -7,6 +7,8 @@ import com.sideproject.sideproject.service.ShortURLService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ShortURLServiceImpl implements ShortURLService {
 
@@ -21,5 +23,10 @@ public class ShortURLServiceImpl implements ShortURLService {
     @Override
     public String createShortURL(ShortUrlRequest shortUrlRequest) {
         return shortURLDao.createShortURL(shortUrlRequest);
+    }
+
+    @Override
+    public List<ShortURL> getAllShortURL(String userId) {
+        return shortURLDao.getAllShortUrls(userId);
     }
 }

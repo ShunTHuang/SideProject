@@ -9,11 +9,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class ShortURLController {
 
     @Autowired
     private ShortURLService shortURLService;
+
+    @GetMapping("/shortUrls/{userId}")
+    public ResponseEntity<List<ShortURL>> getAllShortURLs(@PathVariable String userId){
+        List<ShortURL> shortURLList = shortURLService.getAllShortURL(userId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(shortURLList);
+    }
 
     @GetMapping("/{shortUrl}")
     public ResponseEntity<ShortURL> getShortURL(@PathVariable String shortUrl) {

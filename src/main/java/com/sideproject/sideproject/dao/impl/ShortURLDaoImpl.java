@@ -76,4 +76,15 @@ public class ShortURLDaoImpl implements ShortURLDao {
 
         return shortURL;
     }
+
+    @Override
+    public List<ShortURL> getAllShortUrls(String userId) {
+        String sql = "select * from shortURL where user_id = :userId order by created_date DESC";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        List<ShortURL> shortURLList= namedParameterJdbcTemplate.query(sql, params, new ShortURLRowMapper());
+
+        return shortURLList;
+    }
 }
