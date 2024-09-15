@@ -4,6 +4,7 @@ import com.sideproject.sideproject.dto.UserLoginRequest;
 import com.sideproject.sideproject.dto.UserRegisterRequest;
 import com.sideproject.sideproject.model.User;
 import com.sideproject.sideproject.service.UserService;
+import com.sideproject.sideproject.util.TokenUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TokenUtil tokenUtil;
+
     @PostMapping("/users/register")
     public ResponseEntity<User> registerUser(@RequestBody @Valid UserRegisterRequest userRegisterRequest) {
         Integer userId = userService.register(userRegisterRequest);
@@ -28,9 +32,11 @@ public class UserController {
     }
 
     @PostMapping("/users/login")
-    public ResponseEntity<User> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+    public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
         User user =  userService.login(userLoginRequest);
 
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+        String token = tokenUtil.getToken(user.getUserId(), user.getEmail());
+
+        return ResponseEntity.status(HttpStatus.OK).body(token);
     }
 }

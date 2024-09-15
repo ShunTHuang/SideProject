@@ -3,6 +3,7 @@ package com.sideproject.sideproject.controller;
 import com.sideproject.sideproject.dto.ShortUrlRequest;
 import com.sideproject.sideproject.model.ShortURL;
 import com.sideproject.sideproject.service.ShortURLService;
+import com.sideproject.sideproject.util.TokenUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class ShortURLController {
@@ -17,8 +19,15 @@ public class ShortURLController {
     @Autowired
     private ShortURLService shortURLService;
 
+    @Autowired
+    private TokenUtil tokenUtil;
+
     @GetMapping("/shortUrls/{userId}")
-    public ResponseEntity<List<ShortURL>> getAllShortURLs(@PathVariable String userId){
+    public ResponseEntity<List<ShortURL>> getAllShortURLs(@RequestHeader(name = "user") String jwt,@PathVariable String userId){
+        Map<String, String> userInfo = tokenUtil.parseToken(jwt);
+        if (!userInfo.get("userId").equals(userId)) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         List<ShortURL> shortURLList = shortURLService.getAllShortURL(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(shortURLList);
