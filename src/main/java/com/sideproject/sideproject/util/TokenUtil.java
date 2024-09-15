@@ -31,4 +31,10 @@ public class TokenUtil {
         map.put("userMail", userMail.asString());
         return map;
     }
+
+    public Boolean isTokenValid(String userId, String token) {
+        Map<String, String> userInfo = parseToken(token);
+        if (!userInfo.get("userId").equals(userId)) return false;
+        return true;
+    }
 }

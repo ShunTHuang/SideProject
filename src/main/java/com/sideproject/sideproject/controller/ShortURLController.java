@@ -23,9 +23,8 @@ public class ShortURLController {
     private TokenUtil tokenUtil;
 
     @GetMapping("/shortUrls/{userId}")
-    public ResponseEntity<List<ShortURL>> getAllShortURLs(@RequestHeader(name = "user") String jwt,@PathVariable String userId){
-        Map<String, String> userInfo = tokenUtil.parseToken(jwt);
-        if (!userInfo.get("userId").equals(userId)) {
+    public ResponseEntity<List<ShortURL>> getAllShortURLs(@RequestHeader(name = "user") String jwt, @PathVariable String userId){
+        if (!tokenUtil.isTokenValid(userId, jwt)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         List<ShortURL> shortURLList = shortURLService.getAllShortURL(userId);
@@ -34,7 +33,11 @@ public class ShortURLController {
     }
 
     @GetMapping("/users/{userId}/{shortUrl}")
-    public ResponseEntity<ShortURL> getShortURL(@PathVariable Integer userId, @PathVariable String shortUrl) {
+    public ResponseEntity<ShortURL> getShortURL(@RequestHeader(name = "user") String jwt, @PathVariable Integer userId, @PathVariable String shortUrl) {
+        if (!tokenUtil.isTokenValid(userId.toString(), jwt)) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
         ShortURL shortURL = shortURLService.getShortURLByUserId(userId, shortUrl);
 
         if (shortURL != null) {
