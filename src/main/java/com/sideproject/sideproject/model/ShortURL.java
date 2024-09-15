@@ -1,10 +1,14 @@
 package com.sideproject.sideproject.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 
 public class ShortURL {
 
+    @JsonIgnore
     private Integer shortURLId;
+    @JsonIgnore
     private Integer userId;
     private String originalURL;
     private String shortURL;

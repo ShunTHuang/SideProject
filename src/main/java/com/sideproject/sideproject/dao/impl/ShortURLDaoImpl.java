@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.DigestUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,7 +27,7 @@ public class ShortURLDaoImpl implements ShortURLDao {
     public ShortURL getShortURL(String shortURL) {
         String sql = "select * from shortURL where short = :shortURL";
 
-        Map<String, Object> params = new HashMap<>();;
+        Map<String, Object> params = new HashMap<>();
         params.put("shortURL", shortURL);
         List<ShortURL> shortURLList= namedParameterJdbcTemplate.query(sql, params, new ShortURLRowMapper());
 
@@ -37,18 +38,39 @@ public class ShortURLDaoImpl implements ShortURLDao {
     }
 
     @Override
-    public String createShortURL(ShortUrlRequest shortUrlRequest) {
+    public ShortURL getShortURLByUserId(Integer userId, String shortURL) {
+        String sql = "select * from shortURL where user_id = :userId and short = :shortURL";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        params.put("shortURL", shortURL);
+        List<ShortURL> shortURLList= namedParameterJdbcTemplate.query(sql, params, new ShortURLRowMapper());
+
+        if(shortURLList.size()>0){
+            return shortURLList.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public String createShortURL(Integer userId, ShortUrlRequest shortUrlRequest) {
         String shortURL = GenerateShortUrl.generateShortUrl(shortUrlRequest.getOriginalURL());
-        if (getShortURL(shortURL) != null) {
-            return getShortURL(shortURL).getShortURL();
+        if (getShortURLByUserId(userId, shortURL) != null) {
+            return getShortURLByUserId(userId, shortURL).getShortURL();
         }
 
         String sql = "INSERT INTO shortURL (user_id, original, short, password, expired, created_date, last_modified_date) VALUES" +
                 " (:user_id, :original, :short, :password, :expired, :created_date, :last_modified_date)";
         Map<String, Object> params = new HashMap<>();
-        params.put("user_id", shortUrlRequest.getUserId());
+        params.put("user_id", userId);
         params.put("original", shortUrlRequest.getOriginalURL());
         params.put("short", shortURL);
+
+        if (shortUrlRequest.getPassword() == null) {
+            params.put("password", null);
+        } else {
+            params.put("password", DigestUtils.md5DigestAsHex(shortUrlRequest.getPassword().getBytes()));
+        }
 
         if (shortUrlRequest.getExpiryDate().length() == 0) {
             params.put("expired", null);

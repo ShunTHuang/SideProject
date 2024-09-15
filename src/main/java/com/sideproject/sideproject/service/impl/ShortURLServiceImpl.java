@@ -21,8 +21,13 @@ public class ShortURLServiceImpl implements ShortURLService {
     }
 
     @Override
-    public String createShortURL(ShortUrlRequest shortUrlRequest) {
-        return shortURLDao.createShortURL(shortUrlRequest);
+    public ShortURL getShortURLByUserId(Integer userId, String shortURL) {
+        return shortURLDao.getShortURLByUserId(userId, shortURL);
+    }
+
+    @Override
+    public String createShortURL(Integer userId, ShortUrlRequest shortUrlRequest) {
+        return shortURLDao.createShortURL(userId, shortUrlRequest);
     }
 
     @Override

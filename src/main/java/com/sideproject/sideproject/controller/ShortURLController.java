@@ -34,9 +34,9 @@ public class ShortURLController {
         return ResponseEntity.status(404).build();
     }
 
-    @PostMapping("/shortURL")
-    public ResponseEntity<ShortURL> createShortURL(@RequestBody @Valid ShortUrlRequest shortUrlRequest) {
-        String shortUrlId = shortURLService.createShortURL(shortUrlRequest);
+    @PostMapping("/users/{userId}/shortUrl")
+    public ResponseEntity<ShortURL> createShortURL(@PathVariable Integer userId, @RequestBody @Valid ShortUrlRequest shortUrlRequest) {
+        String shortUrlId = shortURLService.createShortURL(userId, shortUrlRequest);
 
         ShortURL shortURL = shortURLService.getShortURL(shortUrlId);
         return ResponseEntity.status(HttpStatus.CREATED).body(shortURL);

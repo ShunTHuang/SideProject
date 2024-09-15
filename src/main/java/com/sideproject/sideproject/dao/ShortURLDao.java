@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface ShortURLDao {
     ShortURL getShortURL(String shortURL);
-    String createShortURL(ShortUrlRequest shortUrlRequest);
+    ShortURL getShortURLByUserId(Integer userId, String shortURL);
+    String createShortURL(Integer userId, ShortUrlRequest shortUrlRequest);
     List<ShortURL> getAllShortUrls(String userId);
 }
