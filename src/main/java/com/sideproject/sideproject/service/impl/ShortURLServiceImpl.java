@@ -5,7 +5,10 @@ import com.sideproject.sideproject.dto.ShortUrlRequest;
 import com.sideproject.sideproject.model.ShortURL;
 import com.sideproject.sideproject.service.ShortURLService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.DigestUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -36,6 +39,16 @@ public class ShortURLServiceImpl implements ShortURLService {
         }
 
         return s;
+    }
+
+    @Override
+    public ShortURL getShortURLByUserIdPassword(Integer userId, String shortURL, String password) {
+        ShortURL shortURLDetail = shortURLDao.getShortURLByUserId(userId, shortURL);
+        String hashPassword = DigestUtils.md5DigestAsHex(password.getBytes());
+        if (!hashPassword.equals(shortURLDetail.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password");
+        }
+        return shortURLDetail;
     }
 
     @Override

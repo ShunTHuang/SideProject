@@ -33,11 +33,7 @@ public class ShortURLController {
     }
 
     @GetMapping("/users/{userId}/{shortUrl}")
-    public ResponseEntity<ShortURL> getShortURL(@RequestHeader(name = "user") String jwt, @PathVariable Integer userId, @PathVariable String shortUrl) {
-        if (!tokenUtil.isTokenValid(userId.toString(), jwt)) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-
+    public ResponseEntity<ShortURL> getShortURL(@PathVariable Integer userId, @PathVariable String shortUrl) {
         ShortURL shortURL = shortURLService.getShortURLByUserId(userId, shortUrl);
 
         if (shortURL != null) {
@@ -46,8 +42,21 @@ public class ShortURLController {
         return ResponseEntity.status(404).build();
     }
 
+    @GetMapping("/users/{userId}/{shortUrl}/{password}")
+    public ResponseEntity<ShortURL> getShortURLWithPassword(@PathVariable Integer userId, @PathVariable String shortUrl, @PathVariable String password) {
+        ShortURL shortURL = shortURLService.getShortURLByUserIdPassword(userId, shortUrl, password);
+        System.out.println(shortURL);
+        if (shortURL != null) {
+            return ResponseEntity.ok(shortURL);
+        }
+        return ResponseEntity.status(404).build();
+    }
+
     @PostMapping("/users/{userId}/shortUrl")
-    public ResponseEntity<ShortURL> createShortURL(@PathVariable Integer userId, @RequestBody @Valid ShortUrlRequest shortUrlRequest) {
+    public ResponseEntity<ShortURL> createShortURL(@RequestHeader(name = "user") String jwt, @PathVariable Integer userId, @RequestBody @Valid ShortUrlRequest shortUrlRequest) {
+        if (!tokenUtil.isTokenValid(userId.toString(), jwt)) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         String shortUrlId = shortURLService.createShortURL(userId, shortUrlRequest);
 
         ShortURL shortURL = shortURLService.getShortURLByUserId(userId, shortUrlId);

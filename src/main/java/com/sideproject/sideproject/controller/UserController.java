@@ -2,6 +2,7 @@ package com.sideproject.sideproject.controller;
 
 import com.sideproject.sideproject.dto.UserLoginRequest;
 import com.sideproject.sideproject.dto.UserRegisterRequest;
+import com.sideproject.sideproject.model.LoginRes;
 import com.sideproject.sideproject.model.User;
 import com.sideproject.sideproject.service.UserService;
 import com.sideproject.sideproject.util.TokenUtil;
@@ -32,11 +33,13 @@ public class UserController {
     }
 
     @PostMapping("/users/login")
-    public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+    public ResponseEntity<LoginRes> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
         User user =  userService.login(userLoginRequest);
 
         String token = tokenUtil.getToken(user.getUserId(), user.getEmail());
+        LoginRes loginRes = new LoginRes();
+        loginRes.setToken(token);
 
-        return ResponseEntity.status(HttpStatus.OK).body(token);
+        return ResponseEntity.status(HttpStatus.OK).body(loginRes);
     }
 }
