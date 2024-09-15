@@ -1,5 +1,6 @@
 package com.sideproject.sideproject.controller;
 
+import com.sideproject.sideproject.dto.ShortUrlPasswordRequest;
 import com.sideproject.sideproject.dto.ShortUrlRequest;
 import com.sideproject.sideproject.model.ShortURL;
 import com.sideproject.sideproject.service.ShortURLService;
@@ -42,10 +43,9 @@ public class ShortURLController {
         return ResponseEntity.status(404).build();
     }
 
-    @GetMapping("/users/{userId}/{shortUrl}/{password}")
-    public ResponseEntity<ShortURL> getShortURLWithPassword(@PathVariable Integer userId, @PathVariable String shortUrl, @PathVariable String password) {
-        ShortURL shortURL = shortURLService.getShortURLByUserIdPassword(userId, shortUrl, password);
-        System.out.println(shortURL);
+    @PostMapping("/users/{userId}/{shortUrl}/password")
+    public ResponseEntity<ShortURL> getShortURLWithPassword(@PathVariable Integer userId, @PathVariable String shortUrl, @RequestBody @Valid ShortUrlPasswordRequest shortUrlPasswordRequest) {
+        ShortURL shortURL = shortURLService.getShortURLByUserIdPassword(userId, shortUrl, shortUrlPasswordRequest.getPassword());
         if (shortURL != null) {
             return ResponseEntity.ok(shortURL);
         }
