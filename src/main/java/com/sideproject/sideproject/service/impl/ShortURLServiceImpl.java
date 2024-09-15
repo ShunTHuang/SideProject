@@ -17,12 +17,25 @@ public class ShortURLServiceImpl implements ShortURLService {
 
     @Override
     public ShortURL getShortURL(String shortURL) {
-        return shortURLDao.getShortURL(shortURL);
+        ShortURL s = shortURLDao.getShortURL(shortURL);
+        if (s.getPassword() != null) {
+            s.setRequirePassword(true);
+        } else {
+            s.setRequirePassword(false);
+        }
+        return s;
     }
 
     @Override
     public ShortURL getShortURLByUserId(Integer userId, String shortURL) {
-        return shortURLDao.getShortURLByUserId(userId, shortURL);
+        ShortURL s = shortURLDao.getShortURLByUserId(userId, shortURL);
+        if (s.getPassword() != null) {
+            s.setRequirePassword(true);
+        } else {
+            s.setRequirePassword(false);
+        }
+
+        return s;
     }
 
     @Override
@@ -32,6 +45,14 @@ public class ShortURLServiceImpl implements ShortURLService {
 
     @Override
     public List<ShortURL> getAllShortURL(String userId) {
-        return shortURLDao.getAllShortUrls(userId);
+        List<ShortURL> urlList = shortURLDao.getAllShortUrls(userId);
+        for (ShortURL shortURL : urlList) {
+            if (shortURL.getPassword() != null) {
+                shortURL.setRequirePassword(true);
+            } else {
+                shortURL.setRequirePassword(false);
+            }
+        }
+        return urlList;
     }
 }

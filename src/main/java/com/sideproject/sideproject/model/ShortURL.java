@@ -12,7 +12,9 @@ public class ShortURL {
     private Integer userId;
     private String originalURL;
     private String shortURL;
+    @JsonIgnore
     private String password;
+    private Boolean requirePassword;
     private Date expiryDate;
     private Date createdDate;
     private Date modifiedDate;
@@ -79,5 +81,13 @@ public class ShortURL {
 
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
+    }
+
+    public Boolean getRequirePassword() {
+        return requirePassword;
+    }
+
+    public void setRequirePassword(Boolean requirePassword) {
+        this.requirePassword = requirePassword;
     }
 }
