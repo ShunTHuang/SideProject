@@ -3,7 +3,6 @@ package com.sideproject.sideproject.dao.impl;
 import com.sideproject.sideproject.dao.UserDao;
 import com.sideproject.sideproject.dto.UserRegisterRequest;
 import com.sideproject.sideproject.model.User;
-import com.sideproject.sideproject.rowmapper.ShortURLRowMapper;
 import com.sideproject.sideproject.rowmapper.UserRollMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

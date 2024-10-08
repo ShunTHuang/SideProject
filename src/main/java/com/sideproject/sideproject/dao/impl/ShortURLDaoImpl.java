@@ -66,7 +66,7 @@ public class ShortURLDaoImpl implements ShortURLDao {
         params.put("original", shortUrlRequest.getOriginalURL());
         params.put("short", shortURL);
 
-        if (shortUrlRequest.getPassword() == null) {
+        if (shortUrlRequest.getPassword() == null || shortUrlRequest.getPassword().length() == 0) {
             params.put("password", null);
         } else {
             params.put("password", DigestUtils.md5DigestAsHex(shortUrlRequest.getPassword().getBytes()));
@@ -75,7 +75,7 @@ public class ShortURLDaoImpl implements ShortURLDao {
         if (shortUrlRequest.getExpiryDate().length() == 0) {
             params.put("expired", null);
         } else {
-            SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy hh:mm:ss", Locale.US);
+            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
             try {
                 Date date = formatter.parse(shortUrlRequest.getExpiryDate());
                 params.put("expired", date);

@@ -24,7 +24,7 @@ public class ShortURLController {
     private TokenUtil tokenUtil;
 
     @GetMapping("/shortUrls/{userId}")
-    public ResponseEntity<List<ShortURL>> getAllShortURLs(@RequestHeader(name = "user") String jwt, @PathVariable String userId){
+    public ResponseEntity<List<ShortURL>> getAllShortURLs(@RequestHeader("user") String jwt, @PathVariable String userId){
         if (!tokenUtil.isTokenValid(userId, jwt)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }

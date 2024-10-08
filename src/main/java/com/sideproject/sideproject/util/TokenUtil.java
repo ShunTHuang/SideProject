@@ -24,7 +24,6 @@ public class TokenUtil {
     public Map<String, String> parseToken(String token) {
         Map<String, String> map = new HashMap<>();
         DecodedJWT jwt = JWT.require(Algorithm.HMAC256("secretKey")).build().verify(token);
-        System.out.println(jwt.getClaim("userId").asString());
         Claim userId = jwt.getClaim("userId");
         Claim userMail = jwt.getClaim("userMail");
         map.put("userId", userId.asString());

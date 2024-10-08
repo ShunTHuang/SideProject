@@ -41,6 +41,7 @@ public class UserController {
         String token = tokenUtil.getToken(user.getUserId(), user.getEmail());
         LoginRes loginRes = new LoginRes();
         loginRes.setToken(token);
+        loginRes.setUser(user.getUserId());
 
         return ResponseEntity.status(HttpStatus.OK).body(loginRes);
     }
