@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Welcome to shortUrl web!</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+
+<style>
+  body {
+    margin-top: 20px;
+    background: #FFF5EE;
+  }
+
+  .card {
+    box-shadow: 0 20px 27px 0 rgb(0 0 0 / 5%);
+  }
+
+  .avatar.sm {
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: .818125rem;
+  }
+
+  .table-nowrap .table td,
+  .table-nowrap .table th {
+    white-space: nowrap;
+  }
+
+  .table>:not(caption)>*>* {
+    padding: 0.75rem 1.25rem;
+    border-bottom-width: 1px;
+  }
+
+  table th {
+    font-weight: 600;
+    background-color: #eeecfd !important;
+  }
+
+  .fa-arrow-up {
+    color: #00CED1;
+  }
+
+  .fa-arrow-down {
+    color: #FF00FF;
+  }
+
+</style>
+
+<div class="container">
+  <div class="row">
+
+    <div class="mb-3">
+      <form>
+
+        <div class="mb-3">
+          <div class="input-group">
+            <span class="input-group-text">Original Url</span>
+            <input type="text" class="form-control" id="og-url" aria-describedby="basic-addon3 basic-addon4">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <div class="input-group">
+            <span class="input-group-text" id="password">Password</span>
+            <input type="password" class="form-control" id="pwd" aria-describedby="basic-addon3 basic-addon4">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <div class="input-group">
+            <span class="input-group-text" id="expire">Expire Date</span>
+            <input type="text" class="form-control" id="expireDate" aria-describedby="basic-addon3 basic-addon4">
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary" id="generate">Generate</button>
+      </form>
+    </div>
+
+    <div class="col-12 mb-3 mb-lg-5">
+      <div class="position-relative card table-nowrap table-card">
+        <div class="card-header align-items-center">
+          <h5 class="mb-0">All Url</h5>
+        </div>
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead class="small text-uppercase bg-body text-muted">
+            <tr>
+              <th>Original Url</th>
+              <th>Short Url</th>
+              <th>Require Password</th>
+              <th>Expired Date</th>
+            </tr>
+            </thead>
+            <tbody id="url-list"></tbody>
+          </table>
+        </div>
+        <div class="card-footer text-end">Total: <span id="total-counts"></span> </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.2/jquery.min.js" integrity="sha512-tWHlutFnuG0C6nQRlpvrEhE4QpkG1nn2MOUMWmUeRePl4e3Aki0VB6W1v3oLjFtd0hVOtRQ9PHpSfN6u6/QXkQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+<script>
+  function checkVariable(variable) {
+    if (variable === null) {
+      return "";
+    } else {
+      return getISODate(variable);
+    }
+  }
+
+  function checkNeedPassword(variable) {
+    if (variable === true) {
+      return "<span class=\"badge fs-6 fw-normal bg-tint-success text-success\">Yes</span>";
+    } else {
+      return "<span class=\"badge fs-6 fw-normal bg-tint-danger text-danger\">No</span>";
+    }
+  }
+
+
+  function getISODate(dateString) {
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  }
+
+  function renderList() {
+    const headers = {
+      'user': Cookies.get('token')
+    };
+    $.ajax({
+      url: "http://localhost:8080/shortUrls/" + Cookies.get('userLogin'),
+      type: 'GET',
+      headers: headers,
+      success: function(data) {
+        $('#url-list').empty();
+        $.each(data, function(index, urlInfo) {
+          $('#url-list').append('<tr className="align-middle">' +
+            '<td> <a href="'+ urlInfo.originalURL + '" target="_blank"> Original Web </a></td>' +
+            '<td> http://localhost:8081/' + Cookies.get('userLogin') + '/' + urlInfo.shortURL + '</td>' +
+            '<td>' + checkNeedPassword(urlInfo.requirePassword) + '</td>' +
+            '<td>' + checkVariable(urlInfo.expiryDate) + '</td>' +
+            '</tr>');
+        });
+        $('#total-counts').html(data.length);
+      },
+      error: function (xhr, status, error) {
+        alert("Seems something wrong!");
+        window.location.href = "http://localhost:8081/user/login";
+      }
+    });
+  }
+
+  $(function() {
+    renderList();
+  });
+
+  $("#generate").on("click", function() {
+    const headers = {
+      'user': Cookies.get('token')
+    };
+    $.ajax({
+      type: "POST",
+      headers: headers,
+      url: "http://localhost:8080/users/" + Cookies.get('userLogin') + "/shortUrl",
+      data: JSON.stringify({
+        "originalURL":  $("#og-url").val(),
+        "password": $("#pwd").val(),
+        "expiryDate": $("#expireDate").val()
+      }),
+      contentType: "application/json; charset=utf-8",
+      dataType:    "json",
+      success: function(data) {
+        renderList();
+      },
+      error: function (xhr, status, error) {
+        alert("Seems something wrong!");
+      }
+    });
+  });
+</script>
