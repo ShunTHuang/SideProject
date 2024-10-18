@@ -75,6 +75,10 @@
           window.location.href = data.originalURL;
         }
 
+        if (!isNull(data.expiryDate) && !isExpired(data.expiryDate)) {
+          window.location.href = data.originalURL;
+        }
+
         if (!isNull(data.expiryDate) && isExpired(data.expiryDate)) {
           window.location.href = "https://www.google.com.tw/";
         }
